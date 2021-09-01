@@ -35,9 +35,81 @@ namespace InAndOut.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Expense obj)
         {
-            _db.Expenses.Add(obj);
+            if (ModelState.IsValid)
+            { 
+                _db.Expenses.Add(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        //Action for Getting Delete
+        public IActionResult Delete(int? id)
+        { 
+            //Cheking id 
+            if (id == null || id ==0)
+            {
+                return NotFound();
+            }
+
+            var obj = _db.Expenses.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return View(obj);
+        }
+
+
+        //Action for Posting Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            //Getting Record of particular id
+            var obj = _db.Expenses.Find(id);
+            //Cheking object
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            //Removing Record
+            _db.Expenses.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        //Action for Getting Update
+        public IActionResult Update(int? id)
+        {
+            //Cheking id 
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var obj = _db.Expenses.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return View(obj);
+        }
+
+        //Action for posting update Record
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(Expense obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Expenses.Update(obj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
         }
     }
 }
